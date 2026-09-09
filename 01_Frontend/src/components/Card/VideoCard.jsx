@@ -1,5 +1,6 @@
-
+import { Link } from "react-router-dom";
 const VideoCard = ({
+    video,
     thumbnail,
     description,
     createdAt,
@@ -56,6 +57,7 @@ const VideoCard = ({
 
     return (
         <div className="group cursor-pointer hover:bg-gray-700 hover:rounded-2xl p-4">
+            <Link to={`/video/${video._id}`}>
             <div className="relative w-full aspect-video overflow-hidden rounded-lg">
                 <img
                     src={thumbnail}
@@ -95,6 +97,7 @@ const VideoCard = ({
 
 
             </div>
+            </Link>
 
         </div>
     )
