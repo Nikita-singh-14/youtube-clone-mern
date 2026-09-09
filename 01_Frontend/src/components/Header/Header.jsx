@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Button from '../Button'
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { CiSearch } from "react-icons/ci";
-import LogoutBtn from './LogoutBtn';
+
 
 const Header = () => {
     const { user, setUser } = useState(null)
