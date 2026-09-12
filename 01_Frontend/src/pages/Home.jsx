@@ -1,5 +1,3 @@
-// import VideoListing from "../components/Home/VideoListing";
-
 import VideoListing from "../components/Home/VideoListing"
 
 const Home = () => {

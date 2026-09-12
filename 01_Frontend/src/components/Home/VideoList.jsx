@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import VideoListView from '../Card/VideoListView'
 
 const VideoList = () => {

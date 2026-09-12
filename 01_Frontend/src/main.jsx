@@ -3,10 +3,13 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from 'react-router-dom'
 import Layout from './components/Layout.jsx'
 import './index.css'
-import { Channel, Login, Signup, Terms, UploadVideo, VideoList, VideoListing } from './components/index.js'
+import { Channel, Login, Signup, Terms, UploadVideo, VideoDetailsPage, VideoList, VideoListing } from './components/index.js'
 import { Provider } from 'react-redux'
 import store from './Store/Store.js'
 import Home from './pages/Home.jsx'
+import MyContent from './pages/MyContent.jsx'
+import AuthInitializer from './AuthInitializer.jsx'
+import Profile from './components/Profile/Profile.jsx'
 let router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<Layout />}>
@@ -16,9 +19,11 @@ let router = createBrowserRouter(
       <Route path='termsandcondition' element={<Terms />} />
       <Route path='videolisting' element={<VideoListing />} />
       <Route path='videolistview' element={<VideoList />} />
-
+      <Route path='/video/:videoId' element={<VideoDetailsPage/>}/>
+      <Route path='/mycontent' element={<MyContent/>}/>
       <Route path='uploadvideo' element={<UploadVideo/>}/>
       <Route path='channel/:username' element={<Channel/>}/>
+      <Route path="profile" element={<Profile />} />
     </Route>
   )
 )
@@ -26,7 +31,9 @@ let router = createBrowserRouter(
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
+      <AuthInitializer>
       <RouterProvider router={router} />
+      </AuthInitializer>
     </Provider>
   </StrictMode>,
 )

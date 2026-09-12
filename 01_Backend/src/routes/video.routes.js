@@ -17,7 +17,7 @@ router.route("/upload-video").post(jwtVerify, upload.fields([
 videoUpload
 )
 
-router.route("/get-video/:videoId").get(jwtVerify, getVideoById)
+router.route("/get-video/:videoId").get(getVideoById)
 router.route("/update-video/:videoId").patch(jwtVerify, upload.single("thumbnail"), updateVideoInfo)
 router.route("/delete-video/:videoId").delete(jwtVerify, deleteVideo)
 router.route("/toggle-video/:videoId").patch(jwtVerify, togglePublishStatus)
