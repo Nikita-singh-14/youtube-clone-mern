@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 
 import EditPersonalInfo from "./EditPersonalInfo";
-import ChannelInfo from "./ChannelInfo";
+// import ChannelInfo from "./ChannelInfo";
 import ChangePassword from "./ChangePassword";
 
 const Profile = () => {
@@ -142,7 +142,7 @@ const Profile = () => {
                     </button>
 
 
-                    {/* CHANNEL INFORMATION */}
+                    {/* CHANNEL INFORMATION
                     <button
                         onClick={() => setActiveTab("channel")}
                         className={`
@@ -157,7 +157,7 @@ const Profile = () => {
                         `}
                     >
                         Channel Information
-                    </button>
+                    </button> */}
 
 
                     {/* CHANGE PASSWORD */}
