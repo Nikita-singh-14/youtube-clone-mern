@@ -4,5 +4,10 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  server:{
+    proxy:{
+      '/api': 'https://youtube-clone-mern-esbi.onrender.com'
+    }
+  },
   plugins: [tailwindcss(),],
 })

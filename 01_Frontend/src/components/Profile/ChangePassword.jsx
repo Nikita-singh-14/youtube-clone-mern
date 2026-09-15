@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import Input from "../Input";
 const ChangePassword = () => {
     const [formData, setFormData] = useState({
         oldPassword: "",
@@ -99,7 +99,6 @@ const ChangePassword = () => {
                 "Password changed successfully."
             );
 
-            // Clear form after successful password change
             resetForm();
 
         } catch (error) {
@@ -158,49 +157,32 @@ const ChangePassword = () => {
                         </div>
                     )}
 
-                    {/* Old password */}
-                    <div>
-                        <label
-                            htmlFor="oldPassword"
-                            className="block mb-2"
-                        >
-                            Current password
-                        </label>
-
-                        <input
-                            id="oldPassword"
-                            type="password"
-                            name="oldPassword"
-                            value={formData.oldPassword}
-                            onChange={handleChange}
-                            disabled={loading}
-                            required
-                            autoComplete="current-password"
-                            className="w-full bg-transparent border border-gray-500 rounded-lg px-3 py-3 outline-none focus:border-purple-500 disabled:opacity-50"
-                        />
-                    </div>
+                    <Input
+                        label="Old Password"
+                        id='oldPassword'
+                        type='password'
+                        name='newPassword'
+                        value={formData.oldPassword}
+                        onChange={handleChange}
+                        disabled={loading}
+                        required
+                        autoComplete="current-password"
+                    />
 
                     {/* New password */}
                     <div className="mt-5">
 
-                        <label
-                            htmlFor="newPassword"
-                            className="block mb-2"
-                        >
-                            New password
-                        </label>
-
-                        <input
-                            id="newPassword"
-                            type="password"
-                            name="newPassword"
+                        <Input
+                            label="New Password"
+                            id='newPassword'
+                            type='password'
+                            name='newPassword'
                             value={formData.newPassword}
                             onChange={handleChange}
                             disabled={loading}
                             required
                             minLength={6}
                             autoComplete="new-password"
-                            className="w-full bg-transparent border border-gray-500 rounded-lg px-3 py-3 outline-none focus:border-purple-500 disabled:opacity-50"
                         />
 
                         <p className="text-xs text-gray-500 mt-2">
@@ -209,30 +191,18 @@ const ChangePassword = () => {
 
                     </div>
 
-                    {/* Confirm password */}
-                    <div className="mt-5">
-
-                        <label
-                            htmlFor="confirmPassword"
-                            className="block mb-2"
-                        >
-                            Confirm new password
-                        </label>
-
-                        <input
-                            id="confirmPassword"
-                            type="password"
-                            name="confirmPassword"
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
-                            disabled={loading}
-                            required
-                            minLength={6}
-                            autoComplete="new-password"
-                            className="w-full bg-transparent border border-gray-500 rounded-lg px-3 py-3 outline-none focus:border-purple-500 disabled:opacity-50"
-                        />
-
-                    </div>
+                    <Input
+                        label="Confirm New Password"
+                        id='confirmPassword'
+                        type='password'
+                        name='confirmPassword'
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        disabled={loading}
+                        required
+                        minLength={6}
+                        autoComplete="new-password"
+                    />
 
                 </div>
 

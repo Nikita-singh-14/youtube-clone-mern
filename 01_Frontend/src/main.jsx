@@ -19,9 +19,9 @@ let router = createBrowserRouter(
       <Route path='termsandcondition' element={<Terms />} />
       <Route path='videolisting' element={<VideoListing />} />
       <Route path='videolistview' element={<VideoList />} />
-      <Route path='/video/:videoId' element={<VideoDetailsPage/>}/>
-      <Route path='/mycontent' element={<MyContent/>}/>
-      <Route path='uploadvideo' element={<UploadVideo/>}/>
+      <Route path='video/:videoId' element={<VideoDetailsPage/>}/>
+      <Route path='mycontent' element={<MyContent/>}/>
+      <Route path='mycontent/uploadvideo' element={<UploadVideo/>}/>
       <Route path='channel/:username' element={<Channel/>}/>
       <Route path="profile" element={<Profile />} />
     </Route>

@@ -1,16 +1,26 @@
 import { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 import Input from "../Input";
 import Button from "../Button";
-import { useForm } from "react-hook-form";
 
 const UploadVideo = () => {
   const { register, handleSubmit } = useForm();
 
+  const user = useSelector((state) => state.auth.userData);
+
+  const navigate = useNavigate();
+
   const [error, setError] = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const [video, setVideo] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const inputRef = useRef(null);
+
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleFiles = (files) => {
     const selectedFiles = Array.from(files);
@@ -26,10 +36,7 @@ const UploadVideo = () => {
 
     setError("");
     setVideo(videoFiles[0]);
-
-    console.log("Selected video:", videoFiles[0]);
   };
-
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -46,16 +53,66 @@ const UploadVideo = () => {
     }
   };
 
-  const onSubmit = (data) => {
-    console.log("Form Data:", data);
-    console.log("Video:", video);
-  };
+  const onSubmit = async (data) => {
+  try {
+    setError("");
+
+    if (!video) {
+      setError("Please select a video.");
+      return;
+    }
+
+    if (!data.thumbnail || data.thumbnail.length === 0) {
+      setError("Please select a thumbnail.");
+      return;
+    }
+
+    setIsUploading(true);
+
+    const formData = new FormData();
+
+    // IMPORTANT: backend expects "videofile"
+    formData.append("videofile", video);
+
+    formData.append("thumbnail", data.thumbnail[0]);
+    formData.append("title", data.title);
+    formData.append("description", data.description);
+
+    const response = await fetch(
+      `${API_URL}/video/upload-video`,
+      {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        result?.message || "Failed to upload video"
+      );
+    }
+
+    console.log("Video uploaded successfully:", result);
+
+    // Redirect to user's channel
+    navigate(`/channel/${user?.username}`);
+
+  } catch (error) {
+    console.error("Upload video error:", error);
+    setError(error?.message || "Failed to upload video.");
+  } finally {
+    setIsUploading(false);
+  }
+};
 
   return (
     <div className="flex items-center justify-center w-full p-10">
       <div className="mx-auto w-full max-w-4xl bg-gray-800 rounded-xl p-8 border border-white/10 text-white">
 
-
+        {/* Header */}
         <div className="mb-5 flex items-center justify-between">
           <h2 className="text-2xl font-semibold">
             Upload Video
@@ -66,8 +123,9 @@ const UploadVideo = () => {
             bgColor="bg-green-600"
             className="hover:bg-green-500 border border-white"
             form="upload-video-form"
+            disabled={isUploading}
           >
-            Save
+            {isUploading ? "Uploading..." : "Save"}
           </Button>
         </div>
 
@@ -114,7 +172,6 @@ const UploadVideo = () => {
 
               {/* Upload Icon */}
               <div className="w-30 h-30 rounded-full bg-[#dbc8ff] flex items-center justify-center mb-7.5">
-
                 <svg
                   width="58"
                   height="58"
@@ -143,20 +200,16 @@ const UploadVideo = () => {
                     strokeLinecap="round"
                   />
                 </svg>
-
               </div>
 
-              {/* Heading */}
               <h3 className="text-white text-xl font-semibold mb-4 text-center">
                 Drag and drop video files to upload
               </h3>
 
-              {/* Description */}
               <p className="text-[#91a0bd] text-[17px] mb-6 text-center">
                 Your videos will be private until you publish them.
               </p>
 
-              {/* Select Button */}
               <button
                 type="button"
                 onClick={() => inputRef.current?.click()}
@@ -178,23 +231,19 @@ const UploadVideo = () => {
                 Select Files
               </button>
 
-              {/* Hidden Input */}
               <input
                 ref={inputRef}
                 type="file"
                 accept="video/*"
-                multiple
                 hidden
                 onChange={handleFileChange}
               />
 
-              {/* Selected Video */}
               {video && (
                 <p className="mt-5 text-sm text-gray-300">
                   Selected: {video.name}
                 </p>
               )}
-
             </div>
 
             {/* Thumbnail */}
@@ -202,6 +251,7 @@ const UploadVideo = () => {
               label="Thumbnail*"
               placeholder="Select Thumbnail"
               type="file"
+              accept="image/*"
               {...register("thumbnail")}
             />
 
