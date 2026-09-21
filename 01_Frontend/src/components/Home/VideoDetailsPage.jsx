@@ -1,66 +1,66 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom';
 import {
-  AiOutlineLike,
-  AiOutlineDislike,
-  AiOutlinePlusSquare,
-  AiOutlineUserAdd,
+    AiOutlineLike,
+    AiOutlineDislike,
+    AiOutlinePlusSquare,
+    AiOutlineUserAdd,
 } from "react-icons/ai";
 
 const VideoDetailsPage = () => {
-  const { videoId } = useParams();
-  const [loading, setLoading] = useState(true);
-  const [relatedVideos, setRelatedVideos] = useState([])
-  const [comment, setComment] = useState('')
-  const [video, setVideo] = useState(null)
+    const { videoId } = useParams();
+    const [loading, setLoading] = useState(true);
+    const [relatedVideos, setRelatedVideos] = useState([])
+    const [comment, setComment] = useState('')
+    const [video, setVideo] = useState(null)
 
-  const API_URL = import.meta.env.VITE_API_URL;
+    const API_URL = import.meta.env.VITE_API_URL;
 
-  //fetch video details
-  useEffect(() => {
-    const fetchVideoDetails = async () => {
-      try {
-        setLoading(true)
-        const response = await fetch(`${API_URL}/video/get-video/${videoId}`)
-        if(!response.ok){
-          throw new Error("failed to fetch video details")
+    //fetch video details
+    useEffect(() => {
+        const fetchVideoDetails = async () => {
+            try {
+                setLoading(true)
+                const response = await fetch(`${API_URL}/video/get-video/${videoId}`)
+                if (!response.ok) {
+                    throw new Error("failed to fetch video details")
+                }
+                const data = await response.json()
+                console.log("Video Details:", data)
+                setVideo(data.data)
+
+            } catch (error) {
+                console.log("Error", error)
+            } finally {
+                setLoading(false)
+            }
         }
-        const data = await response.json()
-        console.log("Video Details:", data)
-        setVideo(data.data)
+        fetchVideoDetails()
+    }, [videoId, API_URL])
 
-      } catch (error) {
-        console.log("Error", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchVideoDetails()
-  }, [videoId, API_URL])
-
-  //fetch related videos
-  useEffect(() => {
-    const fetchRelatedVideo = async () => {
-      try {
-        const response = await fetch(`${API_URL}/video/allVideos`)
-        if(!response.ok){
-          throw new Error("failed to fetch videos")
-        }
-        const data = await response.json()
-        const videos = data.data.videos || [];
-        const filteredVideos = videos.filter(
+    //fetch related videos
+    useEffect(() => {
+        const fetchRelatedVideo = async () => {
+            try {
+                const response = await fetch(`${API_URL}/video/allVideos`)
+                if (!response.ok) {
+                    throw new Error("failed to fetch videos")
+                }
+                const data = await response.json()
+                const videos = data.data.videos || [];
+                const filteredVideos = videos.filter(
                     (item) => item._id !== videoId
                 );
-        console.log("Related Videos:", data)
-        setRelatedVideos(filteredVideos)
-      } catch (error) {
-        console.log("Error:", error)
-      }
-    }
-    fetchRelatedVideo()
-  }, [API_URL, videoId])
+                console.log("Related Videos:", data)
+                setRelatedVideos(filteredVideos)
+            } catch (error) {
+                console.log("Error:", error)
+            }
+        }
+        fetchRelatedVideo()
+    }, [API_URL, videoId])
 
-  const formatDate = (date) => {
+    const formatDate = (date) => {
         if (!date) return "";
 
         return new Date(date).toLocaleDateString("en-IN", {
@@ -70,25 +70,25 @@ const VideoDetailsPage = () => {
         });
     };
 
-  if (loading) {
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gray-800 flex justify-center items-center text-white">
+                Loading videos...
+            </div>
+        )
+    }
+
+    if (!video) {
+        return (
+            <div className="min-h-screen bg-black text-white flex justify-center items-center">
+                <p>Video not found.</p>
+            </div>
+        );
+    }
+
+
     return (
-      <div className="min-h-screen bg-gray-800 flex justify-center items-center text-white">
-        Loading videos...
-      </div>
-    )
-  }
-
-  if (!video) {
-    return (
-      <div className="min-h-screen bg-black text-white flex justify-center items-center">
-        <p>Video not found.</p>
-      </div>
-    );
-  }
-
-
-  return (
-    <div className="min-h-screen bg-black text-white px-4 py-5">
+        <div className="min-h-screen bg-black text-white px-4 py-5">
 
             <div className="max-w-375 mx-auto">
 
@@ -101,12 +101,21 @@ const VideoDetailsPage = () => {
                         {/* Video Player */}
                         <div className="w-full aspect-video bg-black rounded-lg overflow-hidden">
                             <video
-                                src={video.videoFile}
+                                src={video.videofile}
                                 poster={video.thumbnail}
                                 controls
                                 autoPlay
+                                className="w-full h-full object-contain" 
+                             />
+
+                            {/* <video
+                                src={video.videoFile?.url || video.videoFile}
+                                poster={video.thumbnail?.url || video.thumbnail}
+                                controls
+                                autoPlay
                                 className="w-full h-full object-contain"
-                            />
+                            /> */}
+                            
                         </div>
 
                         {/* Video Information */}
@@ -331,7 +340,7 @@ const VideoDetailsPage = () => {
             </div>
 
         </div>
-  )
+    )
 }
 
 export default VideoDetailsPage

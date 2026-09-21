@@ -21,6 +21,7 @@ import LogoutBtn from "./Header/LogoutBtn.jsx";
 import UploadVideo from "./Channel/UploadVideo.jsx";
 import Channel from "./Channel/Channel.jsx";
 import VideoDetailsPage from "./Home/VideoDetailsPage.jsx";
+import ChannelVideos from "./Channel/ChannelVideos.jsx";
 export {
     Button,
     Card,
@@ -42,6 +43,7 @@ export {
     Container,
     LogoutBtn,
     UploadVideo,
-    VideoDetailsPage
+    VideoDetailsPage,
+    ChannelVideos
 
 }
