@@ -16,7 +16,7 @@ const AuthLayout = () => (
     </header>
 
     <div className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-6xl items-center gap-10 px-5 pb-12 sm:px-10 lg:grid-cols-[1fr_0.9fr]">
-      <section className="hidden lg:block">
+      {/* <section className="hidden lg:block">
         <p className="text-sm font-semibold uppercase tracking-[0.25em] text-purple-300">
           Your next favorite video is waiting
         </p>
@@ -38,7 +38,7 @@ const AuthLayout = () => (
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <section className="w-full">
         <Outlet />
