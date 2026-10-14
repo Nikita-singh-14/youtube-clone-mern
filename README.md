@@ -22,7 +22,7 @@ Video previews are hidden in this capture.
 
 ### Video Detail
 
-![YouTube Clone video detail page](screenshots/videodetail.png)
+![YouTube Clone video detail page](screenshots/videodetailpage.png)
 
 ## Features
 
@@ -127,7 +127,3 @@ Run these commands from the relevant project directory.
 ## API areas
 
 The backend exposes versioned routes for users, videos, subscriptions, likes, comments, playlists, tweets, dashboards, and health checks. The route prefix is `/api/v1`; for example, user routes are under `/api/v1/user` and video routes under `/api/v1/video`.
-
-## License
-
-No project-specific license is currently documented. Add a `LICENSE` file if you intend to publish or distribute the project under a particular license.
