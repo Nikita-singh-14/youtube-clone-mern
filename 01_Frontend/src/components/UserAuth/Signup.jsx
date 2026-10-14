@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import Logo from '../Logo'
 import Input from '../Input'
 import Button from '../Button'
 
@@ -10,10 +9,8 @@ const Signup = () => {
     const navigate = useNavigate()
     const [error, setError] = useState('')
     const [submitting, setSubmitting] = useState(false)
-    const { register, handleSubmit, trigger, watch } = useForm()
+    const { register, handleSubmit, trigger, getValues } = useForm()
     const API_URL = import.meta.env.VITE_API_URL;
-
-    const password = watch('password')
 
     const handleNext = async () => {
         const isValid = await trigger([
@@ -25,7 +22,7 @@ const Signup = () => {
         ])
 
         if (isValid) {
-            if (password !== watch('confirmPassword')) {
+            if (getValues('password') !== getValues('confirmPassword')) {
                 setError('Password do not match')
                 return
             }
@@ -77,38 +74,45 @@ const Signup = () => {
     }
     return (
 
-        <div className='flex items-center justify-center w-full m-10'>
-            <div className={`mx-auto w-full max-w-lg bg-gray-800 rounded-xl p-10 border border-white/10 text-white`}>
-                <div className='mb-2 flex justify-center'>
-                    <span className='inline-block w-full max-w-25'>
-                        <Logo width='100%' />
-                    </span>
-                </div>
-                <h2 className='text-center text-2xl font-bold leading-tight'>Create your account</h2>
-                <p className='mt-2 text-center text-base text-white/60'>
+        <div className='flex w-full justify-center'>
+            <div className='mx-auto w-full max-w-md rounded-2xl border border-white/10 bg-[#171719] p-6 shadow-2xl shadow-black/30 sm:p-9'>
+                <div className='mb-7'>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-purple-300">Join the community</p>
+                    <h2 className='mt-2 text-3xl font-bold leading-tight'>Create your account</h2>
+                    <p className='mt-2 text-sm text-white/60'>
                     Already have an account?&nbsp;
                     <Link
-                        className='font-medium text-primary text-blue-600 transition-all duration-200 hover:underline'
+                        className='font-semibold text-purple-300 transition-all duration-200 hover:text-purple-200 hover:underline'
                         to='/login'>
-                        Log In
+                        Sign in
                     </Link>
-                </p>
-
-                <div className="flex justify-center gap-2 mt-6">
-                    <div className={`h-2 w-20 rounded ${step === 1 ? 'bg-blue-600' : 'bg-gray-600'}`} />
-                    <div className={`h-2 w-20 rounded ${step === 2 ? 'bg-blue-600' : 'bg-gray-600'}`} />
+                    </p>
                 </div>
-                {error && <p className='text-red-600 mt-8 text-ccenter'>{error}</p>}
+
+                <div className="mb-5 flex items-center gap-3">
+                    <div className="flex flex-1 items-center gap-2">
+                        <span className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${step === 1 ? 'bg-purple-500 text-black' : 'bg-purple-500/20 text-purple-200'}`}>1</span>
+                        <span className={`text-xs ${step === 1 ? 'text-white' : 'text-gray-500'}`}>Account</span>
+                    </div>
+                    <div className="h-px flex-1 bg-white/10" />
+                    <div className="flex flex-1 items-center justify-end gap-2">
+                        <span className={`text-xs ${step === 2 ? 'text-white' : 'text-gray-500'}`}>Profile photo</span>
+                        <span className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${step === 2 ? 'bg-purple-500 text-black' : 'bg-white/10 text-gray-400'}`}>2</span>
+                    </div>
+                </div>
+                {error && <p role="alert" className='mb-5 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300'>{error}</p>}
                 <form onSubmit={handleSubmit(signup)}
-                    className='mt-8'>
+                    className=''>
 
                     {step === 1 && (
-                        <div className='space-y-5'>
+                        <div className='space-y-4'>
 
                             <Input
                                 label="Full Name:"
                                 placeholder="Enter your fullname"
                                 type='text'
+                                autoComplete="name"
+                                className="mt-2 border-white/15 bg-[#0d0d0f] focus:border-purple-400"
                                 {...register('fullName', {
                                     required: true,
 
@@ -119,6 +123,8 @@ const Signup = () => {
                                 label="Username:"
                                 placeholder="Enter your username"
                                 type='text'
+                                autoComplete="username"
+                                className="mt-2 border-white/15 bg-[#0d0d0f] focus:border-purple-400"
                                 {...register('username', {
                                     required: true,
 
@@ -129,6 +135,8 @@ const Signup = () => {
                                 label="Email: "
                                 placeholder="Enter your email"
                                 type='email'
+                                autoComplete="email"
+                                className="mt-2 border-white/15 bg-[#0d0d0f] focus:border-purple-400"
                                 {...register('email', {
                                     required: true,
                                     validate: {
@@ -143,6 +151,8 @@ const Signup = () => {
                                 label="Password:"
                                 placeholder="Enter your password"
                                 type='password'
+                                autoComplete="new-password"
+                                className="mt-2 border-white/15 bg-[#0d0d0f] focus:border-purple-400"
                                 {...register('password', {
                                     required: 'Password is required',
                                     minLength: {
@@ -157,6 +167,8 @@ const Signup = () => {
                                 label="Confirm Password:"
                                 placeholder="Enter your password"
                                 type='password'
+                                autoComplete="new-password"
+                                className="mt-2 border-white/15 bg-[#0d0d0f] focus:border-purple-400"
                                 {...register('confirmPassword', {
                                     required: 'Please confirm your password',
 
@@ -166,7 +178,7 @@ const Signup = () => {
 
                             <Button
                             type='button'
-                                className='w-full hover:bg-blue-600 border border-white'
+                                className='w-full rounded-lg bg-purple-500 py-3 font-semibold text-black hover:bg-purple-400'
                                 onClick={handleNext}>Next</Button>
                         </div>
                     )}
@@ -175,16 +187,19 @@ const Signup = () => {
                         <div className='space-y-5'>
                             <Input
                                 label="Avatar:"
-                                placeholder="select your file"
+                                placeholder="Choose a profile photo"
                                 type='file'
                                 accept="image/*"
+                                className="mt-2 border-white/15 bg-[#0d0d0f] file:mr-3 file:rounded-md file:border-0 file:bg-purple-500 file:px-3 file:py-2 file:text-sm file:font-semibold file:text-black"
                                 {...register('avatar', { required: true })}
                             />
 
                             <Input
                                 label="Cover Image:"
-                                placeholder="Select your cover image"
+                                placeholder="Optional cover image"
                                 type='file'
+                                accept="image/*"
+                                className="mt-2 border-white/15 bg-[#0d0d0f] file:mr-3 file:rounded-md file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-sm file:text-white"
                                 {...register('coverImage')}
                             />
 
@@ -193,14 +208,14 @@ const Signup = () => {
                                 <Button
                                     type="button"
                                     onClick={() => setStep(1)}
-                                    className="w-1/2 border border-white" >
+                                    className="w-1/2 rounded-lg border border-white/20 bg-transparent py-3 hover:bg-white/5" >
                                     Back
                                 </Button>
 
                                 <Button
                                     type="submit"
                                     disabled={submitting}
-                                    className="w-1/2 hover:bg-blue-600 border border-white disabled:opacity-60" >
+                                    className="w-1/2 rounded-lg bg-purple-500 py-3 font-semibold text-black hover:bg-purple-400 disabled:opacity-60" >
                                     {submitting ? "Creating account..." : "Sign Up"}
                                 </Button>
                             </div>

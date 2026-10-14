@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { login as authLogin } from '../../Store/features/authSlice'
 import { useForm } from 'react-hook-form'
 import { useDispatch } from 'react-redux'
-import Logo from '../Logo'
 import Input from '../Input'
 import Button from '../Button'
 const Login = () => {
@@ -43,40 +42,41 @@ const Login = () => {
         }
     }
     return (
-        <div className='flex items-center justify-center w-full m-10'>
-            <div className={`mx-auto w-full max-w-lg bg-gray-800 rounded-xl p-10 border border-white/10 text-white`}>
-                <div className='mb-2 flex justify-center'>
-                    <span className='inline-block w-full max-w-25'>
-                        <Logo width='100%' />
-                    </span>
-                </div>
-                <h2 className='text-center text-2xl font-bold leading-tight'>Sign in to your account</h2>
-                <p className='mt-2 text-center text-base text-white/60'>
+        <div className='flex w-full justify-center'>
+            <div className='mx-auto w-full max-w-md rounded-2xl border border-white/10 bg-[#171719] p-6 shadow-2xl shadow-black/30 sm:p-9'>
+                <div className='mb-7'>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-purple-300">Welcome back</p>
+                    <h2 className='mt-2 text-3xl font-bold leading-tight'>Sign in</h2>
+                    <p className='mt-2 text-sm text-white/60'>
                     Don&apos;t have any account?&nbsp;
                     <Link
-                        className='font-medium text-primary text-blue-600 transition-all duration-200 hover:underline'
+                        className='font-semibold text-purple-300 transition-all duration-200 hover:text-purple-200 hover:underline'
                         to='/signup'>
-                        Sign Up
+                        Create account
                     </Link>
-                </p>
-                {error && <p className='text-red-600 mt-8 text-ccenter'>{error}</p>}
+                    </p>
+                </div>
+                {error && <p role="alert" className='mb-5 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300'>{error}</p>}
                 <form onSubmit={handleSubmit(login)}
-                    className='mt-8'>
-                    <div className='space-y-5'>
+                    className='space-y-5'>
 
                         <Input
-                            label="Email: "
-                            placeholder="Enter your email"
+                            label="Email address"
+                            placeholder="you@example.com"
                             type='email'
+                            autoComplete="email"
+                            className="mt-2 border-white/15 bg-[#0d0d0f] focus:border-purple-400"
                             {...register('email', {
                                 required: 'Email is required',
                             })}
                         />
 
                         <Input
-                            label="Password:"
-                            placeholder="Enter your password"
+                            label="Password"
+                            placeholder="Your password"
                             type='password'
+                            autoComplete="current-password"
+                            className="mt-2 border-white/15 bg-[#0d0d0f] focus:border-purple-400"
                             {...register('password', {
                                 required: 'Password is required',
                             })}
@@ -85,8 +85,7 @@ const Login = () => {
                         <Button
                             type='submit'
                             disabled={submitting}
-                            className='w-full hover:bg-blue-600 border border-white disabled:opacity-60'>{submitting ? "Signing in..." : "Sign In"}</Button>
-                    </div>
+                            className='w-full rounded-lg bg-purple-500 py-3 font-semibold text-black hover:bg-purple-400 disabled:cursor-not-allowed disabled:opacity-60'>{submitting ? "Signing in..." : "Sign in"}</Button>
                 </form>
             </div>
         </div>

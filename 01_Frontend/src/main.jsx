@@ -1,7 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { createBrowserRouter, createRoutesFromElements, Navigate, Route, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, createRoutesFromElements, Navigate, Outlet, Route, RouterProvider } from 'react-router-dom'
 import Layout from './components/Layout.jsx'
+import AuthLayout from './components/AuthLayout.jsx'
 import './index.css'
 import { Channel, Login, Signup, Terms, UploadVideo, VideoDetailsPage, VideoList, VideoListing } from './components/index.js'
 import { Provider } from 'react-redux'
@@ -18,25 +19,29 @@ import Privacy from './components/Support/Privacy.jsx'
 import Support from './components/Support/Support.jsx'
 let router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path='/' element={<Layout />}>
-      <Route index element={<Home />} />
-      <Route path='login' element={<Login />} />
-      <Route path='signup' element={<Signup />} />
-      <Route path='termsandcondition' element={<Terms />} />
-      <Route path='privacy' element={<Privacy />} />
-      <Route path='support' element={<Support />} />
-      <Route path='history' element={<History />} />
-      <Route path='subscriptions' element={<Subscriber />} />
-      <Route path='likedvideos' element={<LikeVideos />} />
-      <Route path='playlists' element={<Collections />} />
-      <Route path='settings' element={<Navigate to="/profile" replace />} />
-      <Route path='videolisting' element={<VideoListing />} />
-      <Route path='videolistview' element={<VideoList />} />
-      <Route path='/video/:videoId' element={<VideoDetailsPage/>}/>
-      <Route path='mycontent' element={<MyContent/>}/>
-      <Route path='/mycontent/uploadvideo' element={<UploadVideo/>}/>
-      <Route path='/channel/:username' element={<Channel/>}/>
-      <Route path="profile" element={<Profile />} />
+    <Route element={<Outlet />}>
+      <Route element={<AuthLayout />}>
+        <Route path='login' element={<Login />} />
+        <Route path='signup' element={<Signup />} />
+      </Route>
+      <Route path='/' element={<Layout />}>
+        <Route index element={<Home />} />
+        <Route path='termsandcondition' element={<Terms />} />
+        <Route path='privacy' element={<Privacy />} />
+        <Route path='support' element={<Support />} />
+        <Route path='history' element={<History />} />
+        <Route path='subscriptions' element={<Subscriber />} />
+        <Route path='likedvideos' element={<LikeVideos />} />
+        <Route path='playlists' element={<Collections />} />
+        <Route path='settings' element={<Navigate to="/profile" replace />} />
+        <Route path='videolisting' element={<VideoListing />} />
+        <Route path='videolistview' element={<VideoList />} />
+        <Route path='video/:videoId' element={<VideoDetailsPage />} />
+        <Route path='mycontent' element={<MyContent />} />
+        <Route path='mycontent/uploadvideo' element={<UploadVideo />} />
+        <Route path='channel/:username' element={<Channel />} />
+        <Route path="profile" element={<Profile />} />
+      </Route>
     </Route>
   )
 )
