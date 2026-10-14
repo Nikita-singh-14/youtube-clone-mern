@@ -11,9 +11,11 @@ const Login = () => {
     const dispatch = useDispatch()
     const { register, handleSubmit } = useForm()
     const [error, setError] = useState('')
+    const [submitting, setSubmitting] = useState(false)
     const API_URL = import.meta.env.VITE_API_URL
     const login = async (data) => {
         setError('')
+        setSubmitting(true)
         try {
             const response = await fetch(`${API_URL}/user/login`,
                 {
@@ -25,22 +27,19 @@ const Login = () => {
             )
             const result = await response.json()
             if (!response.ok) {
-                console.log(result.message || 'Login failed')
+                throw new Error(result.message || 'Login failed')
             }
 
-
-            if (result.success) {
-                console.log("Login successful:", result);
-
-                dispatch(authLogin({
-                    userData: result.data.user
-                }));
-
-                navigate("/");
-            }
+            if (!result.success) throw new Error(result.message || "Login failed.")
+            dispatch(authLogin({
+                userData: result.data.user
+            }));
+            navigate("/");
         } catch (error) {
             console.error('Login Error:', error)
             setError(error.message || 'Something went wrong')
+        } finally {
+            setSubmitting(false)
         }
     }
     return (
@@ -85,7 +84,8 @@ const Login = () => {
 
                         <Button
                             type='submit'
-                            className='w-full hover:bg-blue-600 border border-white'>Sign In</Button>
+                            disabled={submitting}
+                            className='w-full hover:bg-blue-600 border border-white disabled:opacity-60'>{submitting ? "Signing in..." : "Sign In"}</Button>
                     </div>
                 </form>
             </div>

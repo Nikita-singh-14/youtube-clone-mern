@@ -26,13 +26,13 @@ const NavOptions = [
     },
     {
         icon: <MdUnsubscribe />,
-        label: "Subscribers",
-        slug: "/subscribers"
+        label: "Subscriptions",
+        slug: "/subscriptions"
     },
     {
         icon: <VscNewCollection />,
-        label: "Collection",
-        slug: "/collection"
+        label: "Playlists",
+        slug: "/playlists"
     },
     {
         icon: <AiFillLike />,
@@ -54,24 +54,25 @@ const NavOptions = [
 const Sidebar = () => {
 
     return (
-        <div className="flex flex-col gap-2 bg-gray-800 min-h-screen px-2 pt-8 border border-white">
+        <nav aria-label="Main navigation" className="flex min-h-screen flex-col gap-2 border-r border-white/10 bg-[#181818] px-2 pt-5 md:pt-8">
             {
                 NavOptions.map((option, idx) =>
                     <NavLink
                         key={idx}
                         to={option.slug}
+                        title={option.label}
                         className={({ isActive }) =>
-                            `text-xl flex items-center gap-2 rounded py-2 px-2 text-white
+                            `flex items-center gap-2 rounded py-2 px-2 text-sm text-white transition-colors md:text-base
                         ${isActive ? "bg-gray-500 " : "hover:bg-gray-700"}`
                         }
                     >
-                        <span>{option.icon}</span>
-                        <span>{option.label}</span>
+                        <span className="shrink-0 text-xl">{option.icon}</span>
+                        <span className="hidden truncate sm:inline">{option.label}</span>
                     </NavLink>
                 )
             }
 
-        </div>
+        </nav>
     )
 }
 export default Sidebar

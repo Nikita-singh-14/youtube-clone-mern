@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import VideoListView from '../Card/VideoListView'
 
 const VideoList = () => {
@@ -7,15 +7,14 @@ const VideoList = () => {
     useEffect(() => {
         const getVideo = async () => {
             try {
-                const response = await fetch("http://localhost:3000/api/v1/video/allVideos")
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/video/allVideos`)
                 if (!response.ok) {
-                    console.log("ERROR: Failed to fetch video")
+                    throw new Error("Failed to fetch videos.")
                 }
                 const data = await response.json()
-                console.log(data.data.videos)
                 setVideos(data.data.videos)
             } catch (error) {
-                console.log(error)
+                console.error("Unable to load video list:", error)
             }
         }
         getVideo()
@@ -38,7 +37,7 @@ const VideoList = () => {
                         thumbnail={video.thumbnail}
                         duration={video.duration}
                         createdAt={video.createdAt}
-                        veiws={video.veiws}
+                        views={video.views}
                     />
                 ))
             ) : (

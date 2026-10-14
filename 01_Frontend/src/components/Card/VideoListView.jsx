@@ -1,6 +1,7 @@
-import React from 'react'
+import { Link } from 'react-router-dom'
 
 const VideoListView = ({
+    video,
     thumbnail,
     description,
     createdAt,
@@ -57,7 +58,7 @@ const VideoListView = ({
     };
 
     return (
-        <div className="flex group cursor-pointer hover:bg-gray-700 hover:rounded-2xl p-4 gap-4">
+        <Link to={`/video/${video?._id}`} className="flex group cursor-pointer hover:bg-gray-700 hover:rounded-2xl p-4 gap-4">
             <div className='flex-1'>
             <div className="relative w-full max-w-150 aspect-video overflow-hidden rounded-lg">
                 <img
@@ -83,12 +84,12 @@ const VideoListView = ({
 
                     {/* Title */}
                     <h2 className="text-white font-semibold text-base leading-5 line-clamp-2">
-                        {description}
+                        {video?.title || description}
                     </h2>
 
                     {/* Channel */}
                     <p className="text-gray-400 text-sm mt-2">
-                        Code Master
+                        {video?.owner?.username || video?.owner?.fullName || "VideoTube creator"}
                     </p>
 
                     {/* Views + time */}
@@ -97,12 +98,9 @@ const VideoListView = ({
                     </p>
 
                 </div>
-
-
             </div>
             </div>
-
-        </div>
+        </Link>
 
   )
 }

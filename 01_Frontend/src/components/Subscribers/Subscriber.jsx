@@ -1,9 +1,3 @@
-import React from 'react'
+import { SubscriptionsPage } from "../Library/LibraryPage";
 
-const Subscriber = () => {
-  return (
-    <div>Subscriber</div>
-  )
-}
-
-export default Subscriber
+export default SubscriptionsPage;

@@ -1,6 +1,6 @@
 import { UserPlus } from "lucide-react";
 
-const ChannelInfo = ({ channel }) => {
+const ChannelInfo = ({ channel, onSubscribe, subscriptionLoading }) => {
   return (
     <div className="px-5">
 
@@ -13,7 +13,7 @@ const ChannelInfo = ({ channel }) => {
           <div className="-mt-8">
             <img
               src={channel.avatar}
-              alt={channel.name}
+              alt={channel.fullName || channel.username}
               className="
                 w-35
                 h-35
@@ -29,16 +29,16 @@ const ChannelInfo = ({ channel }) => {
           <div className="pt-5">
 
             <h1 className="text-2xl font-medium">
-              {channel.name}
+              {channel.fullName || channel.username}
             </h1>
 
             <p className="text-[#91a0bd]">
-              {channel.username}
+              @{channel.username}
             </p>
 
             <p className="text-[#91a0bd]">
-              {channel.subscribers} Subscribers ·{" "}
-              {channel.subscribed} Subscribed
+              {channel.subscribersCount ?? 0} Subscribers ·{" "}
+              {channel.channelsSubscribedToCount ?? 0} Subscribed
             </p>
 
           </div>
@@ -46,6 +46,10 @@ const ChannelInfo = ({ channel }) => {
 
         {/* Subscribe */}
         <button
+          type="button"
+          onClick={onSubscribe}
+          disabled={subscriptionLoading}
+          aria-pressed={Boolean(channel.isSubscribed)}
           className="
             flex
             items-center
@@ -61,7 +65,7 @@ const ChannelInfo = ({ channel }) => {
         >
           <UserPlus size={22} />
 
-          {channel.isSubscribed
+          {subscriptionLoading ? "Updating..." : channel.isSubscribed
             ? "Subscribed"
             : "Subscribe"}
         </button>

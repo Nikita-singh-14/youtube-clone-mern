@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 
 import EditPersonalInfo from "./EditPersonalInfo";
-// import ChannelInfo from "./ChannelInfo";
 import ChangePassword from "./ChangePassword";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
     const [activeTab, setActiveTab] = useState("personal");
@@ -102,7 +102,8 @@ const Profile = () => {
 
 
                     {/* VIEW CHANNEL BUTTON */}
-                    <button
+                    <Link
+                        to={`/channel/${user.username}`}
                         className="
                             mb-2
                             bg-purple-500
@@ -116,7 +117,7 @@ const Profile = () => {
                         "
                     >
                         View channel
-                    </button>
+                    </Link>
 
                 </div>
 
@@ -185,10 +186,6 @@ const Profile = () => {
 
                     {activeTab === "personal" && (
                         <EditPersonalInfo />
-                    )}
-
-                    {activeTab === "channel" && (
-                        <ChannelInfo />
                     )}
 
                     {activeTab === "password" && (

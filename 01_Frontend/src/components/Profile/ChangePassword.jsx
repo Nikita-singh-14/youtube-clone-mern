@@ -161,7 +161,7 @@ const ChangePassword = () => {
                         label="Old Password"
                         id='oldPassword'
                         type='password'
-                        name='newPassword'
+                        name='oldPassword'
                         value={formData.oldPassword}
                         onChange={handleChange}
                         disabled={loading}

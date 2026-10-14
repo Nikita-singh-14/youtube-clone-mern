@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FiEye, FiUser, FiHeart, FiPlus, FiTrash2, FiEdit2, } from "react-icons/fi";
 import { Button } from "../components";
 const AdminDashboard = () => {
@@ -15,6 +15,12 @@ const AdminDashboard = () => {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [busyVideo, setBusyVideo] = useState("");
+  const [editingVideo, setEditingVideo] = useState(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editThumbnail, setEditThumbnail] = useState(null);
+  const [savingEdit, setSavingEdit] = useState(false);
   const API_URL = import.meta.env.VITE_API_URL;
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -66,21 +72,77 @@ const AdminDashboard = () => {
     return new Date(date)
       .toLocaleDateString("en-GB", { day: "numeric", month: "numeric", year: "numeric", });
   };
-  const handleToggle = (video) => {
-
-    setVideos((prevVideos) => prevVideos
-      .map((item) => item._id === video._id ?
-        { ...item, isPublished: !item.isPublished, } :
-        item));
+  const handleToggle = async (video) => {
+    setError("");
+    setBusyVideo(video._id);
+    try {
+      const response = await fetch(`${API_URL}/video/toggle-video/${video._id}`, {
+        method: "PATCH",
+        credentials: "include",
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result?.message || "Unable to change publish status.");
+      setVideos((current) => current.map((item) =>
+        item._id === video._id ? { ...item, isPublished: !(item.isPublished ?? item.published ?? false) } : item,
+      ));
+    } catch (requestError) {
+      setError(requestError.message || "Unable to change publish status.");
+    } finally {
+      setBusyVideo("");
+    }
   };
   const handleDelete = async (videoId) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this video?");
     if (!confirmDelete) return;
-    setVideos((prevVideos) => prevVideos.filter((video) => video._id !== videoId));
+    setError("");
+    setBusyVideo(videoId);
+    try {
+      const response = await fetch(`${API_URL}/video/delete-video/${videoId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result?.message || "Unable to delete video.");
+      setVideos((current) => current.filter((video) => video._id !== videoId));
+    } catch (requestError) {
+      setError(requestError.message || "Unable to delete video.");
+    } finally {
+      setBusyVideo("");
+    }
   };
-  const handleEdit = (videoId) => {
-    console.log("Edit video:", videoId);
-    navigate(`/admin/video/${videoId}/edit`);
+  const handleEdit = (video) => {
+    setEditingVideo(video);
+    setEditTitle(video.title || "");
+    setEditDescription(video.description || "");
+    setEditThumbnail(null);
+    setError("");
+  };
+  const handleSaveEdit = async (event) => {
+    event.preventDefault();
+    if (!editingVideo) return;
+    setError("");
+    setSavingEdit(true);
+    try {
+      const formData = new FormData();
+      formData.append("title", editTitle);
+      formData.append("description", editDescription);
+      if (editThumbnail) formData.append("thumbnail", editThumbnail);
+      const response = await fetch(`${API_URL}/video/update-video/${editingVideo._id}`, {
+        method: "PATCH",
+        credentials: "include",
+        body: formData,
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result?.message || "Unable to update video.");
+      setVideos((current) => current.map((video) =>
+        video._id === editingVideo._id ? { ...video, ...result.data } : video,
+      ));
+      setEditingVideo(null);
+    } catch (requestError) {
+      setError(requestError.message || "Unable to update video.");
+    } finally {
+      setSavingEdit(false);
+    }
   };
   const handleUpload = () => {
     navigate("uploadvideo");
@@ -96,6 +158,14 @@ const AdminDashboard = () => {
     );
   } return (
     <div className="min-h-screen bg-[#101010] text-white px-6 py-8">
+      {!user && (
+        <div className="mx-auto max-w-4xl rounded-xl border border-white/10 bg-[#181818] p-8 text-center">
+          <h1 className="text-2xl font-bold">Creator dashboard</h1>
+          <p className="mt-2 text-gray-400">Sign in to manage your channel and videos.</p>
+          <Link to="/login" className="mt-5 inline-block rounded-full bg-purple-500 px-5 py-2 font-semibold text-black">Sign in</Link>
+        </div>
+      )}
+      {user && <>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 mb-8">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">
@@ -165,7 +235,7 @@ const AdminDashboard = () => {
           {/* Table Header */}
           <thead>
             <tr className="border-b border-gray-600">
-              <th className="text-left px-6 py-5 font-semibold"> Status </th>
+              <th className="text-left px-6 py-5 font-semibold"> Visibility </th>
               <th className="text-left px-6 py-5 font-semibold"> Status </th>
               <th className="text-left px-6 py-5 font-semibold"> Uploaded </th>
               <th className="text-left px-6 py-5 font-semibold"> Rating </th>
@@ -183,7 +253,8 @@ const AdminDashboard = () => {
                   className="border-b border-gray-700 last:border-b-0 hover:bg-[#151515] transition-colors" >
 
                   <td className="px-6 py-5">
-                    <button type="button" onClick={() => handleToggle(video)}
+                    <button type="button" disabled={busyVideo === video._id} onClick={() => handleToggle(video)}
+                      aria-label={`Toggle publish status for ${video.title}`}
                       className={`relative w-15 h-7.5 rounded-full transition-colors ${published ? "bg-[#a765f7]" : "bg-gray-200"}`} >
                       <span
                         className={`absolute top-1 w-5.5 h-5.5 rounded-full bg-black transition-all ${published ? "right-1" : "left-1"}`} />
@@ -212,13 +283,34 @@ const AdminDashboard = () => {
                         {formatNumber(video.dislikes || 0)}{" "} dislikes </span> </div> </td> {/* Date */}
                   <td className="px-6 py-5 whitespace-nowrap"> {formatDate(video.createdAt)} </td>
                   {/* Actions */} <td className="px-6 py-5"> <div className="flex items-center gap-5">
-                    <button type="button" onClick={() => handleDelete(video._id)}
+                    <button type="button" disabled={busyVideo === video._id} onClick={() => handleDelete(video._id)}
                       className="text-white hover:text-red-500 transition-colors" title="Delete" >
-                      <FiTrash2 size={21} /> </button> <button type="button" onClick={() => handleEdit(video._id)}
+                      <FiTrash2 size={21} /> </button> <button type="button" onClick={() => handleEdit(video)}
                         className="text-white hover:text-purple-400 transition-colors" title="Edit" > <FiEdit2 size={21} />
                     </button> </div> </td> </tr>);
             })) : (<tr> <td colSpan="6" className="text-center py-12 text-gray-500" >
-              No videos uploaded yet. </td> </tr>)} </tbody> </table> </div> </div>
+              No videos uploaded yet. </td> </tr>)} </tbody> </table> </div>
+      </>}
+      {editingVideo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" role="presentation" onMouseDown={(event) => {
+          if (event.target === event.currentTarget && !savingEdit) setEditingVideo(null);
+        }}>
+          <form onSubmit={handleSaveEdit} aria-labelledby="edit-video-heading" className="w-full max-w-xl rounded-xl border border-white/10 bg-[#181818] p-6">
+            <h2 id="edit-video-heading" className="text-xl font-bold">Edit video details</h2>
+            <label className="mt-5 block text-sm text-gray-300" htmlFor="edit-video-title">Title</label>
+            <input id="edit-video-title" value={editTitle} onChange={(event) => setEditTitle(event.target.value)} required className="mt-2 w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-white" />
+            <label className="mt-4 block text-sm text-gray-300" htmlFor="edit-video-description">Description</label>
+            <textarea id="edit-video-description" value={editDescription} onChange={(event) => setEditDescription(event.target.value)} rows={5} className="mt-2 w-full rounded-lg border border-white/15 bg-[#101010] px-4 py-3 text-white" />
+            <label className="mt-4 block text-sm text-gray-300" htmlFor="edit-video-thumbnail">Replace thumbnail (optional)</label>
+            <input id="edit-video-thumbnail" type="file" accept="image/*" onChange={(event) => setEditThumbnail(event.target.files?.[0] ?? null)} className="mt-2 block w-full text-sm text-gray-300" />
+            <div className="mt-6 flex justify-end gap-3">
+              <button type="button" disabled={savingEdit} onClick={() => setEditingVideo(null)} className="rounded-lg border border-white/20 px-4 py-2 hover:bg-white/10">Cancel</button>
+              <button type="submit" disabled={savingEdit} className="rounded-lg bg-purple-500 px-4 py-2 font-semibold text-black disabled:opacity-60">{savingEdit ? "Saving..." : "Save changes"}</button>
+            </div>
+          </form>
+        </div>
+      )}
+    </div>
   );
 }
 

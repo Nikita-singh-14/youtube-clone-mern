@@ -1,18 +1,16 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
-import { useDispatch } from 'react-redux'
 import Logo from '../Logo'
 import Input from '../Input'
 import Button from '../Button'
 
 const Signup = () => {
-    const [userData, setUserData] = useState('')
     const [step, setStep] = useState(1);
     const navigate = useNavigate()
-    const dispatch = useDispatch()
     const [error, setError] = useState('')
-    const { register, handleSubmit, trigger, formState: { errors }, watch } = useForm()
+    const [submitting, setSubmitting] = useState(false)
+    const { register, handleSubmit, trigger, watch } = useForm()
     const API_URL = import.meta.env.VITE_API_URL;
 
     const password = watch('password')
@@ -38,6 +36,11 @@ const Signup = () => {
 
     const signup = async (data) => {
         setError('')
+        if (!data.avatar?.[0]) {
+            setError('Please select an avatar image.')
+            return
+        }
+        setSubmitting(true)
         try {
             const formData = new FormData()
 
@@ -65,11 +68,11 @@ const Signup = () => {
                 throw new Error(result.message || 'Signup failed')
             }
 
-            console.log('Signup successful:', result)
-
             navigate('/login')
         } catch (error) {
             setError(error.message || "something went wrong")
+        } finally {
+            setSubmitting(false)
         }
     }
     return (
@@ -174,7 +177,8 @@ const Signup = () => {
                                 label="Avatar:"
                                 placeholder="select your file"
                                 type='file'
-                                {...register('avatar')}
+                                accept="image/*"
+                                {...register('avatar', { required: true })}
                             />
 
                             <Input
@@ -195,8 +199,9 @@ const Signup = () => {
 
                                 <Button
                                     type="submit"
-                                    className="w-1/2 hover:bg-blue-600 border border-white" >
-                                    Sign Up
+                                    disabled={submitting}
+                                    className="w-1/2 hover:bg-blue-600 border border-white disabled:opacity-60" >
+                                    {submitting ? "Creating account..." : "Sign Up"}
                                 </Button>
                             </div>
                         </div>

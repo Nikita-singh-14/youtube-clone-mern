@@ -1,48 +1,52 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import VideoCard from '../Card/VideoCard'
 import { GoVideo } from "react-icons/go";
 
 const VideoListing = () => {
     const [videos, setVideos] = useState([])
-    const [loading, SetLoading] = useState(true)
-
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState('')
+    const [searchParams] = useSearchParams()
+    const query = searchParams.get('query') || ''
     const API_URL = import.meta.env.VITE_API_URL
-
 
     useEffect(() => {
         const getVideos = async () => {
             try {
-                const response = await fetch(`${API_URL}/video/allVideos`)
+                setLoading(true)
+                setError('')
+                const search = query ? `?query=${encodeURIComponent(query)}` : ''
+                const response = await fetch(`${API_URL}/video/allVideos${search}`)
                 if (!response.ok) {
-                    console.log("ERROR: Failed to fetch video")
-                    throw new Error("Failed to fetch videos")
+                    const result = await response.json()
+                    throw new Error(result?.message || "Failed to fetch videos")
                 }
                 const data = await response.json()
-
-                console.log(data.data.videos)
                 setVideos(data.data.videos)
-
             } catch (error) {
-                console.log(error)
+                setError(error.message || "Failed to fetch videos.")
             } finally {
-                SetLoading(false)
+                setLoading(false)
             }
         }
         getVideos()
-    }, [API_URL])
+    }, [API_URL, query])
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-800 flex justify-center items-center text-white">
+            <div className="min-h-screen bg-[#111] flex justify-center items-center text-white">
                 Loading videos...
             </div>
         )
     }
 
     return (
-        <div className="min-h-screen bg-gray-800 px-4 py-6">
+        <div className="min-h-screen bg-[#111] px-4 py-6">
+            {query && <h1 className="mb-5 text-xl font-semibold text-white">Search results for “{query}”</h1>}
+            {error && <div role="alert" className="mb-5 rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-red-300">{error}</div>}
             {/* <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-8'>
-                {videos.length > 0 ? (
+                {!error && videos.length > 0 ? (
                     videos.map((video) => (
                         //TODO
                         //when we click any video then it redirect to video details page
@@ -90,7 +94,7 @@ const VideoListing = () => {
                     </h3>
 
                     <p className="text-gray-400 mt-2">
-                        Please try searching for something else.
+                        {query ? "Try a different search term." : "Be the first to upload a video."}
                     </p>
                 </div>
             )}

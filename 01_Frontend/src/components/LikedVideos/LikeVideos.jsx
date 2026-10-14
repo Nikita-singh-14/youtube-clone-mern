@@ -1,9 +1,3 @@
-import React from 'react'
+import { LikedVideosPage } from "../Library/LibraryPage";
 
-const LikeVideos = () => {
-  return (
-    <div>LikeVideos</div>
-  )
-}
-
-export default LikeVideos
+export default LikedVideosPage;

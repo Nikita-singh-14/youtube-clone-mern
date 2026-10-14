@@ -1,9 +1,3 @@
-import React from 'react'
+import { HistoryPage } from "../Library/LibraryPage";
 
-const History = () => {
-  return (
-    <div>History</div>
-  )
-}
-
-export default History
+export default HistoryPage;

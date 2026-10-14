@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const VideoGrid = ({ videos }) => {
   return (
     <div className="p-5">
@@ -5,8 +7,9 @@ const VideoGrid = ({ videos }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
         {videos.map((video) => (
-          <div
+          <Link
             key={video._id}
+            to={`/video/${video._id}`}
             className="bg-gray-800 rounded-lg overflow-hidden"
           >
 
@@ -27,8 +30,8 @@ const VideoGrid = ({ videos }) => {
               </p>
 
             </div>
+          </Link>
 
-          </div>
         ))}
 
       </div>

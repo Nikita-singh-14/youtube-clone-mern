@@ -6,6 +6,7 @@ const VideoCard = ({
     createdAt,
     views,
     duration }) => {
+    const owner = video?.owner
 
     const formatDuration = (seconds) => {
         const hours = Math.floor(seconds / 3600);
@@ -80,12 +81,12 @@ const VideoCard = ({
 
                     {/* Title */}
                     <h2 className="text-white font-semibold text-base leading-5 line-clamp-2">
-                        {description}
+                    {video?.title || description}
                     </h2>
 
                     {/* Channel */}
                     <p className="text-gray-400 text-sm mt-2">
-                        Code Master
+                        {owner?.username || owner?.fullName || "VideoTube creator"}
                     </p>
 
                     {/* Views + time */}
